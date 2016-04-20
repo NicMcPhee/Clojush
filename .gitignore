@@ -22,3 +22,4 @@ lib/
 doc/
 cov/*
 out
+/interview_results/*
