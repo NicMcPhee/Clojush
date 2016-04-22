@@ -1,3 +1,10 @@
+;; fizzbuzz.clj
+;; Seeing if Clojush can "get a job" by solving FizzBuzz,
+;; a problem for Clojush that is a popular interview question.
+;; Jacob Opdahl, opdah023@morris.umn.edu
+;; Mark Lehet, lehet005@morris.umn.edu
+;; Maggie Casale, casal033@morris.umn.edu
+
 (ns clojush.problems.interview.fizzbuzz
   (:use [clojush.pushgp.pushgp]
         [clojush.random]
@@ -8,8 +15,6 @@
 ;;;;;;;;;;;;;
 ;; Takes an integer that will be checked for divisbility
 ;; by three and five
-
-
 (def input-set
   "Our test case inputs."
   [[3]
@@ -57,6 +62,8 @@
    ]
   )
 
+
+; We solve the FizzBuzz problem ourselves here.
 (defn expected-output
   [inputs]
     (let [[x] inputs]
@@ -90,6 +97,8 @@
     top-str))
 
 
+; A simple error function. If the expected is actual,
+; 0 error. Otherwise, it has an error of 1.
 (defn all-errors
   [program]
   (doall
@@ -101,6 +110,8 @@
           1)))))
 
 
+; Here is where we choose what additional inputs and
+; constants we want the run to have available to it.
 (def atom-generators
   (concat (registered-for-stacks [:integer :boolean :string :exec])
           (list (fn [] (lrand-int 100))
