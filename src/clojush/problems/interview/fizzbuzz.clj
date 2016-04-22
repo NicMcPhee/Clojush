@@ -104,8 +104,7 @@
 (def atom-generators
   (concat (registered-for-stacks [:integer :boolean :string :exec])
           (list (fn [] (lrand-int 100))
-                3 5 15
-                "Fizz" "Buzz" "FizzBuzz"
+                "Fizz" "Buzz"
                 'in1)))
 
 
