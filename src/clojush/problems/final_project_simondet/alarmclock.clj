@@ -2,7 +2,7 @@
 ;; an example problem for clojush, a Push/PushGP system written in Clojure
 ;; Ben Simondet, simon998@morris.umn.edu, 2016
 
-(ns clojush.problems.ec-ai-demos.alarmclock
+(ns clojush.problems.final_project_simondet.alarmclock
   (:use [clojush.pushgp.pushgp]
         [clojush.random]
         [clojush pushstate interpreter]
@@ -37,10 +37,12 @@
 (defn expected-output
   [inputs]
   (let [[weekday on-vacation] inputs]
-    (and (== weekday 0)
-         (if on-vacation
-           (<= temperature 100)
-           (<= temperature 90)))))
+    (cond
+    (and on-vacation (or (= weekday 0) (= weekday 6))) "off"
+    (= true on-vacation) "10:00"
+    (or (= weekday 0) (= weekday 6)) "10:00"
+    :else "7:00")))
+
 
 ; Make a new push state, and then add every
 ; input to the special `:input` stack.
@@ -54,12 +56,14 @@
 
 ; The only part of this you'd need to change is
 ; which stack(s) the return value(s) come from.
+; The only part of this you'd need to change is
+; which stack(s) the return value(s) come from.
 (defn actual-output
   [program inputs]
   (let [start-state (make-start-state inputs)
         end-state (run-push program start-state)
-        top-int (top-item :boolean end-state)]
-    top-int))
+        top-string (top-item :string end-state)]
+    top-string))
 
 (defn all-errors
   [program]
@@ -74,7 +78,7 @@
 (def atom-generators
   (concat (registered-for-stacks [:integer :boolean :exec])
           (list (fn [] (lrand-int 100))
-                60 90 100
+                "7:00" "10:00" "off"
                 'in1 'in2)))
 
 (def argmap
