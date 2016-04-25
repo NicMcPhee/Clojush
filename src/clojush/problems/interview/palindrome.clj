@@ -114,7 +114,8 @@
 ; Here is where we choose what additional inputs and
 ; constants we want the run to have available to it.
 (def atom-generators
-  (concat (registered-for-stacks [:integer :boolean :string :exec])
+  (concat (registered-for-stacks [:integer :boolean :char :exec])
+          (remove #{'string_reverse} (registered-for-stacks [:string]))
           (list 'in1)))
 
 
