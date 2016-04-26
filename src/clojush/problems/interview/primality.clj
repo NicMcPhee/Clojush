@@ -11,52 +11,59 @@
         [clojush pushstate interpreter]
         clojush.instructions.common))
 
+
+; Used in the function we borrowed to determine primality
+; for our expected-output function.
 (require '[clojure.math.numeric-tower :as math])
 
+;;;;;;;;;;;;;
+;; Takes an integer that will be checked
+;; to see if it is prime.
 (def input-set
   "Our test case inputs."
-  [
-    [1]
-    [2]
-    [3]
-    [5]
-    [7]
-    [11]
-    [13]
-    [17]
-    [19]
-    [23]
-    [29]
-    [31]
-    [37]
-    [41]
-    [43]
-    [47]
-    [53]
-    [59]
-    [61]
-    [67]
-    [4]
-    [6]
-    [8]
-    [9]
-    [10]
-    [12]
-    [14]
-    [15]
-    [16]
-    [18]
-    [20]
-    [21]
-    [22]
-    [24]
-    [25]
-    [26]
-    [27]
-    [28]
-    [10000000]
-    [69]
-    ])
+  [[1]
+   [2]
+   [3]
+   [5]
+   [7]
+   [11]
+   [13]
+   [17]
+   [19]
+   [23]
+   [29]
+   [31]
+   [37]
+   [41]
+   [43]
+   [47]
+   [53]
+   [59]
+   [61]
+   [67]
+   [4]
+   [6]
+   [8]
+   [9]
+   [10]
+   [12]
+   [14]
+   [15]
+   [16]
+   [18]
+   [20]
+   [21]
+   [22]
+   [24]
+   [25]
+   [26]
+   [27]
+   [28]
+   [10000000]
+   [69]
+   ]
+  )
+
 
 ;; Prime function taken from:
 ; http://swizec.com/blog/checking-for-primes-dumber-algorithm-is-faster-algorithm/swizec/1580
@@ -69,6 +76,7 @@
           (if (> i root) true
             (if (zero? (mod n i)) false
               (recur (+ i 2)))))))))
+
 
 ; Make a new push state, and then add every
 ; input to the special `:input` stack.
@@ -110,6 +118,7 @@
   (concat (registered-for-stacks [:integer :boolean :exec])
           (list (fn [] (lrand-int 100))
                 'in1)))
+
 
 (def argmap
   {:error-function all-errors

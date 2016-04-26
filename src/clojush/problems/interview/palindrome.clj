@@ -71,10 +71,10 @@
 ; Else, return false.
 (defn expected-output
   [inputs]
-    (let [[in] inputs]
-      (if (= in (s/reverse in))
-        true
-        false)))
+  (let [[in] inputs]
+    (if (= in (s/reverse in))
+      true
+      false)))
 
 
 ; Make a new push state, and then add every
