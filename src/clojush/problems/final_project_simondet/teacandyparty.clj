@@ -2,7 +2,7 @@
 ;; an example problem for clojush, a Push/PushGP system written in Clojure
 ;; Ben Simondet, simon998@morris.umn.edu, 2016
 
-(ns clojush.problems.ec-ai-demos.teacandyparty
+(ns clojush.problems.final_project_simondet.teacandyparty
   (:use [clojush.pushgp.pushgp]
         [clojush.random]
         [clojush pushstate interpreter]
@@ -20,33 +20,23 @@
 
 
 (def input-set
-  [[70, false]
-   [70, true]
-   [95, false]
-   [95, true]
-   [90, false]
-   [90, true]
-   [50, false]
-   [50, true]
-   [100, false]
-   [100, true]
-   [105, true]
-   [59, false]
-   [59, true]
-   [60, false]
-   [59, true]
-   [91, false]
-   [91, true]
-   [101, true]
-   [101, false]])
+  [[70, 71]
+   [35, 70]
+   [70, 35]
+   [4,7]
+   [10, 14]
+   [2,4]
+   [5,5]
+   [5,10]
+   [10,5]])
 
 (defn expected-output
   [inputs]
-  (let [[temperature is-summer] inputs]
-    (and (>= temperature 60)
-         (if is-summer
-           (<= temperature 100)
-           (<= temperature 90)))))
+  (let [[tea candy] inputs]
+    (cond
+    (or (< tea 5) (< candy 5)) 0
+    (or (>= tea (* 2 candy)) (>= candy (* 2 tea))) 2
+    :else 1)))
 
 ; Make a new push state, and then add every
 ; input to the special `:input` stack.
@@ -78,9 +68,10 @@
           1)))))
 
 (def atom-generators
-  (concat (registered-for-stacks [:integer :boolean :exec])
+  (concat (registered-for-stacks [:integer :boolean])
+          (remove #{'exec_y} (registered-for-stacks [:exec]))
           (list (fn [] (lrand-int 100))
-                60 90 100
+                5
                 'in1 'in2)))
 
 (def argmap

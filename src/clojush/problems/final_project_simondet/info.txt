@@ -1,0 +1,10 @@
+alarmclock - coded, tested, and solved
+blackjack - coded, tested, and solved
+speeding - coded, tested, and solved 154
+teacandyparty - coded, tested,
+teninbetween - coded, tested, and solved
+threevaluesum - coded, tested
+twovalueforbiddensum - coded, tested
+
+
+add solved or not in pull request

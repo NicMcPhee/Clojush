@@ -2,7 +2,7 @@
 ;; an example problem for clojush, a Push/PushGP system written in Clojure
 ;; Ben Simondet, simon998@morris.umn.edu, 2016
 
-(ns clojush.problems.ec-ai-demos.teninbetween
+(ns clojush.problems.final_project_simondet.teninbetween
   (:use [clojush.pushgp.pushgp]
         [clojush.random]
         [clojush pushstate interpreter]
@@ -15,33 +15,25 @@
 
 
 (def input-set
-  [[70, false]
-   [70, true]
-   [95, false]
-   [95, true]
-   [90, false]
-   [90, true]
-   [50, false]
-   [50, true]
-   [100, false]
-   [100, true]
-   [105, true]
-   [59, false]
-   [59, true]
-   [60, false]
-   [59, true]
-   [91, false]
-   [91, true]
-   [101, true]
-   [101, false]])
+  [[10,1,2]
+   [1,20,3]
+   [1,20,2]
+   [1,2,1]
+   [2,30,4]
+   [2,2,4]
+   [2,3,2]
+   [3,1,30]
+   [30,3,1]
+   [1,30,3]])
 
 (defn expected-output
   [inputs]
-  (let [[temperature is-summer] inputs]
-    (and (>= temperature 60)
-         (if is-summer
-           (<= temperature 100)
-           (<= temperature 90)))))
+  (let [[num1 num2 num3] inputs]
+    (cond
+      (<= 10 (Math/abs (- num3 num2))) true
+      (<= 10 (Math/abs (- num2 num1))) true
+      (<= 10 (Math/abs (- num3 num1))) true
+      :else false)))
 
 ; Make a new push state, and then add every
 ; input to the special `:input` stack.
@@ -59,8 +51,8 @@
   [program inputs]
   (let [start-state (make-start-state inputs)
         end-state (run-push program start-state)
-        top-int (top-item :boolean end-state)]
-    top-int))
+        top-bool (top-item :boolean end-state)]
+    top-bool))
 
 (defn all-errors
   [program]
@@ -75,8 +67,8 @@
 (def atom-generators
   (concat (registered-for-stacks [:integer :boolean :exec])
           (list (fn [] (lrand-int 100))
-                60 90 100
-                'in1 'in2)))
+                10
+                'in1 'in2 'in3)))
 
 (def argmap
   {:error-function all-errors
