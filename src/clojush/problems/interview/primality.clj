@@ -223,7 +223,11 @@
    [713684295]
    ]
   )
-
+;; Function that returns the largest factor of a number. Taken from:
+; http://mishadoff.com/blog/clojure-euler-problem-003/
+;; (defn greatest-prime-of [number]
+;;   (reduce max (filter #(zero? (mod number %))
+;;                       (take-while #(< % (sqrt number)) primes))))
 
 ;; Prime function taken from:
 ; http://swizec.com/blog/checking-for-primes-dumber-algorithm-is-faster-algorithm/swizec/1580
