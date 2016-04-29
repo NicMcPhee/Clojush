@@ -21,8 +21,7 @@
 ;; to see if it is prime.
 (def input-set
   "Our test case inputs."
-  [[1]
-   [2]
+  [[2]
    [3]
    [5]
    [7]
@@ -83,11 +82,11 @@
    [809929]
    [973129]
    [977609]
-   [1059467]
-   [1240013]
-   [1289803]
-   [1299791]
-   [1299827]
+   [992219]
+   [994913]
+   [996637]
+   [997123]
+   [997153]
    [101663]
    [865061]
    [873157]
@@ -102,25 +101,25 @@
    [119503]
    [119417]
    [123493]
-   [12112319]
-   [12114643]
-   [171102427]
-   [171103267]
-   [171112751]
-   [1711100539]
-   [1711104151]
-   [1711102177]
-   [17110979363]
-   [17110985467]
-   [17110994561]
-   [17111009999]
-   [15111006583]
-   [15111009653]
-   [15111013849]
-   [35111012231]
-   [35111011079]
-   [35111012357]
-   [35111003797]
+   [984959]
+   [983317]
+   [986257]
+   [462421]
+   [461917]
+   [467633]
+   [13001]
+   [12203]
+   [14771]
+   [17291]
+   [21001]
+   [25013]
+   [27127]
+   [29389]
+   [15737]
+   [16603]
+   [44963]
+   [16187]
+   [16903]
    [4]
    [6]
    [8]
@@ -183,11 +182,11 @@
    [809920]
    [973124]
    [977602]
-   [1059468]
-   [1240010]
-   [1289802]
-   [1299794]
-   [1299826]
+   [109468]
+   [140010]
+   [189802]
+   [299794]
+   [129826]
    [101667]
    [865068]
    [873150]
@@ -215,31 +214,34 @@
    [4489]
    [1675]
    [10201]
-   [10335365569]
-   [4044121]
+   [103335]
+   [404120]
    [8645]
    [71365]
-   [749831642895]
-   [713684295]
+   [749834]
+   [1000000]
    ]
   )
-;; Function that returns the largest factor of a number. Taken from:
-; http://mishadoff.com/blog/clojure-euler-problem-003/
-;; (defn greatest-prime-of [number]
-;;   (reduce max (filter #(zero? (mod number %))
-;;                       (take-while #(< % (sqrt number)) primes))))
+
+
+;; Function that returns the number of factors of a given number. Taken from:
+; https://rosettacode.org/wiki/Factors_of_an_integer
+(defn expected-output [inputs]
+  (let [[n] inputs]
+	(count (filter #(zero? (rem n %)) (range 1 (inc n))))))
+
 
 ;; Prime function taken from:
 ; http://swizec.com/blog/checking-for-primes-dumber-algorithm-is-faster-algorithm/swizec/1580
-(defn expected-output
-  [inputs]
-  (let [[n] inputs]
-    (if (and (even? n) (not= n 2)) false
-      (let [root (num (int (Math/sqrt n)))]
-        (loop [i 3]
-          (if (> i root) true
-            (if (zero? (mod n i)) false
-              (recur (+ i 2)))))))))
+;; (defn expected-output
+;;   [inputs]
+;;   (let [[n] inputs]
+;;     (if (and (even? n) (not= n 2)) false
+;;       (let [root (num (int (Math/sqrt n)))]
+;;         (loop [i 3]
+;;           (if (> i root) true
+;;             (if (zero? (mod n i)) false
+;;               (recur (+ i 2)))))))))
 
 
 ; Make a new push state, and then add every
@@ -259,8 +261,8 @@
   [program inputs]
   (let [start-state (make-start-state inputs)
         end-state (run-push program start-state)
-        top-bool (top-item :boolean end-state)]
-    top-bool))
+        top-int (top-item :integer end-state)]
+    top-int))
 
 
 ; A simple error function. If the expected is actual,
