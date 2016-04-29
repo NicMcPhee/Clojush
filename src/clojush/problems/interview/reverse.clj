@@ -101,14 +101,15 @@
 ; Here is where we choose what additional inputs and
 ; constants we want the run to have available to it.
 (def atom-generators
-  (concat (registered-for-stacks [:integer :boolean :char :exec])
-          (remove #{'string_reverse} (registered-for-stacks [:string]))
-          (list 'in1)))
+  (concat (registered-for-stacks [:integer :boolean :char])
+          (remove #{'string_reverse} (registered-for-stacks [:string])
+                  (remove #{'exec_y} (registered-for-stacks [:exec]))
+                  (list 'in1)))
 
 
-(def argmap
-  {:error-function all-errors
-   :atom-generators atom-generators
-   })
+  (def argmap
+    {:error-function all-errors
+     :atom-generators atom-generators
+     })
 
 
