@@ -54,7 +54,7 @@
   [program inputs]
   (let [start-state (make-start-state inputs)
         end-state (run-push program start-state)
-        top-int (top-item :boolean end-state)]
+        top-int (top-item :integer end-state)]
     top-int))
 
 (defn all-errors

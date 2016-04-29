@@ -1,10 +1,17 @@
 alarmclock - coded, tested, and solved
 blackjack - coded, tested, and solved
-speeding - coded, tested, and solved 154
-teacandyparty - coded, tested,
+speeding - coded, tested, and solved
+teacandyparty - coded, tested, and solved
 teninbetween - coded, tested, and solved
-threevaluesum - coded, tested
-twovalueforbiddensum - coded, tested
+threevaluesum - coded, tested,
+twovalueforbiddensum - coded, tested, and solved
 
 
 add solved or not in pull request
+
+teacandyparty
+(in2 integer_dec in1 5 integer_div 5 integer_dec integer_mod integer_div in1 integer_min 5 integer_dec integer_dec integer_mod)
+
+twovalueforbiddensum
+(in1 integer_dup 10 integer_lte exec_when in2 integer_dup exec_shove boolean_flush integer_lte exec_when (10 integer_empty) exec_if in2 (integer_dup exec_shove integer_yankdup boolean_swap exec_when exec_eq exec_dup () integer_yank in1 boolean_not exec_swap integer_add))
+
