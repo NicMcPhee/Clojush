@@ -102,8 +102,8 @@
 ; constants we want the run to have available to it.
 (def atom-generators
   (concat (registered-for-stacks [:integer :boolean :char])
-          (remove #{'string_reverse} (registered-for-stacks [:string])
-                  (remove #{'exec_y} (registered-for-stacks [:exec]))
+          (remove #{'string_reverse} (registered-for-stacks [:string]))
+          (remove #{'exec_y} (registered-for-stacks [:exec]))
                   (list 'in1)))
 
 
