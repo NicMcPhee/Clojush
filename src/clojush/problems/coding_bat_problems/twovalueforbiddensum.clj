@@ -62,8 +62,10 @@
           0
           1)))))
 
+
 (def atom-generators
-  (concat (registered-for-stacks [:integer :boolean :exec])
+  (concat (registered-for-stacks [:integer :boolean])
+          (remove #{'exec_y 'exec_k 'exec_s} (registered-for-stacks [:exec]))
           (list (fn [] (lrand-int 100))
                 10 19
                 'in1 'in2)))
