@@ -2,7 +2,7 @@
 ;; an example problem for clojush, a Push/PushGP system written in Clojure
 ;; Ben Simondet, simon998@morris.umn.edu, 2016
 
-(ns clojush.problems.final_project_simondet.blackjack
+(ns clojush.problems.coding_bat_problems.blackjack
   (:use [clojush.pushgp.pushgp]
         [clojush.random]
         [clojush pushstate interpreter]
