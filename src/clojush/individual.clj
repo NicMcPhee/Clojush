@@ -5,9 +5,9 @@
 ;; Populations are vectors of agents with individuals as their states (along with error and
 ;; history information).
 
-(defrecord individual [genome program errors total-error normalized-error weighted-error meta-errors history ancestors uuid parent-uuids genetic-operators])
+(defrecord individual [genome program errors total-error normalized-error weighted-error meta-errors history ancestors uuid parent-uuids genetic-operators age])
 
-(defn make-individual [& {:keys [genome program errors total-error normalized-error weighted-error meta-errors history ancestors uuid parent-uuids genetic-operators]
+(defn make-individual [& {:keys [genome program errors total-error normalized-error weighted-error meta-errors history ancestors uuid parent-uuids genetic-operators age]
                           :or {genome nil
                                program nil
                                errors nil
@@ -19,8 +19,9 @@
                                ancestors nil
                                uuid (java.util.UUID/randomUUID)
                                parent-uuids nil
-                               genetic-operators nil}}]
-  (individual. genome program errors total-error normalized-error weighted-error meta-errors history ancestors uuid parent-uuids genetic-operators))
+                               genetic-operators nil
+                               age 0}}]
+  (individual. genome program errors total-error normalized-error weighted-error meta-errors history ancestors uuid parent-uuids genetic-operators age))
 
 (defn printable [thing]
   (letfn [(unlazy [[head & tail]]
@@ -32,5 +33,7 @@
 
 (defn individual-string [i]
   (cons 'individual.
-        (let [k '(:genome :program :errors :total-error :normalized-error :weighted-error :meta-errors :history :ancestors :uuid :parent-uuids :genetic-operators)]
+        (let [k '(:genome :program :errors :total-error :normalized-error :weighted-error :meta-errors :history :ancestors :uuid :parent-uuids :genetic-operators :age)]
           (interleave k  (map #(printable (get i %)) k)))))
+
+

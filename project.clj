@@ -1,11 +1,9 @@
-
-(defproject clojush "2.12.0-1-SNAPSHOT" 
+(defproject clojush "2.21.0-1-SNAPSHOT" 
   :description "The Push programming language and the PushGP genetic programming
-                system implemented in Clojure.
-                See http://hampshire.edu/lspector/push.html"
+                system implemented in Clojure. See http://pushlanguage.com" 
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.7.0"]
+  :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojars.etosch/cosmos "1.0.0"]
                  [org.clojure/math.numeric-tower "0.0.4"]
                  [org.clojure/math.combinatorics "0.1.1"]
@@ -13,10 +11,12 @@
                  [local-file "0.1.0"]
                  [clojure-csv "2.0.1"]
                  [org.clojure/data.json "0.2.6"]
-                 [clj-random "0.1.7"]]
+                 [clj-random "0.1.7"]
+                 ;; https://mvnrepository.com/artifact/org.apache.commons/commons-math3 
+                 [org.apache.commons/commons-math3 "3.2"]]
   :plugins [[lein-codox "0.9.1"]
             [lein-shell "0.5.0"]
-            [org.clojars.benfb/lein-gorilla "0.4.0"]
+            [org.clojars.benfb/lein-gorilla "0.4.1"]
             [lein-cloverage "1.0.6"]]
   :codox {:source-uri "http://github.com/lspector/Clojush/blob/master/{filepath}#L{line}"
           :namespaces [#"^(?!clojush\.problems)"]

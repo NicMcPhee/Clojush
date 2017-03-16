@@ -1,4 +1,3 @@
-
 (ns clojush.pushgp.breed
   (:use [clojush globals random simplification individual evaluate translate]
         [clojush.pushgp parent-selection genetic-operators])
@@ -22,6 +21,9 @@
    :uniform-silence-mutation {:fn uniform-silence-mutation :parents 1}
    :uniform-deletion {:fn uniform-deletion :parents 1}
    :uniform-addition {:fn uniform-addition :parents 1}
+   :uniform-addition-and-deletion {:fn uniform-addition-and-deletion :parents 1}
+   :uniform-combination-and-deletion {:fn uniform-combination-and-deletion :parents 2}
+   :genesis {:fn genesis :parents 1} ;; the parent will be ignored
    :make-next-operator-revertable {:fn nil :parents 0}
    :autoconstruction {:fn autoconstruction :parents 2}
    })
@@ -76,7 +78,16 @@
                     operator-list)
           operator (first op-list)
           num-parents (:parents (get genetic-operators operator))
-          other-parents (repeatedly (dec num-parents) #(select population location argmap))
+          other-parents (repeatedly 
+                          (dec num-parents) 
+                          (fn []
+                            (loop [re-selections 0
+                                   other (select population location argmap)]
+                              (if (and (= other first-parent)
+                                       (< re-selections (:self-mate-avoidance-limit argmap)))
+                                (recur (inc re-selections)
+                                       (select population location argmap))
+                                other))))
           op-fn (:fn (get genetic-operators operator))
           child (assoc (apply op-fn (concat (vector first-parent) other-parents (vector argmap)))
                        :parent-uuids (concat (:parent-uuids first-parent)
@@ -139,4 +150,3 @@
                 (<= prob (second (first vectored-go-probabilities))))
           (perform-genetic-operator (first (first vectored-go-probabilities)) population location rand-gen argmap)
           (recur (rest vectored-go-probabilities)))))))
-

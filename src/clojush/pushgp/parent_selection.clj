@@ -1,4 +1,3 @@
-
 (ns clojush.pushgp.parent-selection
   (:use [clojush random globals util])
   (:require [clojure.set :as set]))
@@ -15,7 +14,8 @@
             (nth pop
                  (if (zero? trivial-geography-radius)
                    (lrand-int (count pop))
-                   (mod (+ location (- (lrand-int (+ 1 (* trivial-geography-radius 2))) trivial-geography-radius))
+                   (mod (+ location (- (lrand-int (+ 1 (* trivial-geography-radius 2))) 
+                                       trivial-geography-radius))
                         (count pop))))))
         err-fn (case total-error-method
                  :sum :total-error
@@ -43,26 +43,49 @@
         with-non-empty-genomes
         pop))
     pop))
-  
+
+(defn youth-bias
+  "If lexicase-youth-bias is falsy, returns pop. Otherwise, lexicase-youth-bias should 
+  be a vector of [pmin pmax] with pmin and pmax both being between 0 and 1 (inclusive)
+  with pmin + pmax <= 1.0. Then, with probability pmin, returns individuals in pop
+  with age @min-age; with probability pmax, returns all of pop; with probability 
+  (- 1.0 pmin pmax), selects an age cutoff uniformly from those present in the population
+  and returns individuals with the cutoff age or lower."
+  [pop {:keys [lexicase-youth-bias]}]
+  (if (not lexicase-youth-bias)
+    pop
+    (let [rand-val (lrand)
+          age-limit (if (<= rand-val (first lexicase-youth-bias))
+                      @min-age
+                      (if (<= rand-val (apply + lexicase-youth-bias))
+                        @max-age
+                        (lrand-nth (distinct (map :age pop)))))]
+      (filter (fn [ind] (<= (:age ind) age-limit))
+              pop))))
+
 (defn lexicase-selection
   "Returns an individual that does the best on the fitness cases when considered one at a
-   time in random order.  If trivial-geography-radius is non-zero, selection is limited to parents within +/- r of location"
+  time in random order.  If trivial-geography-radius is non-zero, selection is limited to 
+  parents within +/- r of location"
   [pop location {:keys [trivial-geography-radius] :as argmap}]
   (let [lower (mod (- location trivial-geography-radius) (count pop))
         upper (mod (+ location trivial-geography-radius) (count pop))
         popvec (vec pop)
-        subpop (if (zero? trivial-geography-radius) 
-                 pop
-                 (if (< lower upper)
-                   (subvec popvec lower (inc upper))
-                   (into (subvec popvec lower (count pop)) 
-                         (subvec popvec 0 (inc upper)))))]
+        subpop (youth-bias
+                 (if (zero? trivial-geography-radius) 
+                   pop
+                   (if (< lower upper)
+                     (subvec popvec lower (inc upper))
+                     (into (subvec popvec lower (count pop)) 
+                           (subvec popvec 0 (inc upper)))))
+                 argmap)]
     (loop [survivors (retain-one-individual-per-error-vector 
                        (possibly-remove-individuals-with-empty-genomes
                          subpop argmap))
            cases (lshuffle (range (count (:errors (first subpop)))))]
       (if (or (empty? cases)
-              (empty? (rest survivors)))
+              (empty? (rest survivors))
+              (< (lrand) (:lexicase-slippage argmap)))
         (lrand-nth survivors)
         (let [min-err-for-case (apply min (map #(nth % (first cases))
                                                (map #(:errors %) survivors)))]
@@ -70,19 +93,36 @@
                          survivors)
                  (rest cases)))))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; epsilon lexicase selection
+
 (defn mad
   "returns median absolute deviation (MAD)"
   [x]
   (let [; Get median of x
         x-median (median x)
         ; calculate absolute deviation from median
-        dev (map #(Math/abs (- % x-median))
+        dev (map #(Math/abs (float (- % x-median)))
                  x)]
     (median dev)))
 
+(defn calculate-epsilons-for-epsilon-lexicase
+  "Calculates the epsilon values for epsilon lexicase selection. Only runs once
+   per generation. "
+  [pop-agents {:keys [epsilon-lexicase-epsilon]}]
+  (when (not epsilon-lexicase-epsilon)
+    (let [pop (map deref pop-agents)
+          test-case-errors (apply map list (map :errors pop))
+          meta-case-errors (apply map list (map :meta-errors pop))
+          all-errors (concat test-case-errors meta-case-errors)
+          epsilons (map mad all-errors)]
+      (println "Epsilons for epsilon lexicase:" epsilons)
+      (reset! epsilons-for-epsilon-lexicase epsilons))))
+
 (defn epsilon-lexicase-selection
-    "Returns an individual that does within epsilon of the best on the fitness cases when considered one at a
-   time in random order.  If trivial-geography-radius is non-zero, selection is limited to parents within +/- r of location"
+  "Returns an individual that does within epsilon of the best on the fitness cases when 
+  considered one at a time in random order.  If trivial-geography-radius is non-zero, 
+  selection is limited to parents within +/- r of location"
   [pop location {:keys [trivial-geography-radius epsilon-lexicase-epsilon]}]
   (let [lower (mod (- location trivial-geography-radius) (count pop))
         upper (mod (+ location trivial-geography-radius) (count pop))
@@ -99,12 +139,10 @@
               (empty? (rest survivors)))
         (lrand-nth survivors)
         (let [; If epsilon-lexicase-epsilon is set in the argmap, use it for epsilon.
-              ; Otherwise, use automatic epsilon selections. aka use MAD for epsilon.
+              ; Otherwise, use automatic epsilon selections, which are calculated once per generation.
               epsilon (if epsilon-lexicase-epsilon
                         epsilon-lexicase-epsilon
-                        (mad (map #(nth (:errors %)
-                                        (first cases))
-                                  survivors)))
+                        (nth @epsilons-for-epsilon-lexicase (first cases)))
               min-err-for-case (apply min (map #(nth % (first cases))
                                                (map #(:errors %) survivors)))]
         (recur (filter #(<= (nth (:errors %)
@@ -235,4 +273,7 @@
                                                                1
                                                                (inc sel-count)))))
     selected))
+
+
+
 
