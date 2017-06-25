@@ -224,10 +224,6 @@
           ;; The number of extra instances of autoconstructive_boolean_rand to include in
           ;; :atom-generators for autoconstruction. If negative then autoconstructive_boolean_rand
           ;; will not be in :atom-generators at all.
-          
-          :age-combining-function :average
-          ;; For genetic operators that involve multiple parents, the function used to combine
-          ;; the incremented ages of the parents to produce the age of the child.
 
           ;;----------------------------------------
           ;; Epignenetics
@@ -255,16 +251,20 @@
 
           :parent-selection :lexicase
           ;; The parent selection method. Options include :tournament, :lexicase, :epsilon-lexicase,
-          ;; :elitegroup-lexicase, :uniform :leaky-lexicase
+          ;; :elitegroup-lexicase, :uniform, :leaky-lexicase, random-threshold-lexicase
 
           :epsilon-lexicase-epsilon nil
           ;; When parent-selection is :epsilon-lexicase,
           ;; the value for epsilon. If nil, automatic epsilon lexicase selection will be used.
 
+          :epsilon-lexicase-probability 1
+          ;; The probability that each filtering step in epsilon lexicase selection will allow
+          ;; candidates with errors within epsilon of the best to survive, rather than just
+          ;; the best.
+
           :lexicase-leakage 0.1
           ;; If using leaky lexicase selection, the probability that a selection event will return
-          ;; a random (tourny 1) individual from the entire population (note: currently ignores 
-          ;; location, so doesn't play nice with trivial geography).
+          ;; a random (tourny 1) individual from the entire population.
           
           :lexicase-slippage 0
           ;; If using lexicase or leaky lexicase selection, the probability that each step of the
@@ -291,10 +291,6 @@
           ;; A vector containing meta-error categories that can be used for parent selection, but
           ;; do not affect total error. See clojush.evaluate for options.
 
-          :trivial-geography-radius 0
-          ;; If non-zero, this is used as the radius from which to select individuals for
-          ;; tournament or lexicase selection.
-
           :decimation-ratio 1 ;; If >= 1, does nothing. Otherwise, is the percent of the population
           ;; size that is retained before breeding. If 0 < decimation-ratio < 1, decimation
           ;; tournaments will be used to reduce the population to size (* population-size
@@ -313,22 +309,32 @@
           ;; of this parameter is the number of re-selections that will be performed to try
           ;; to find a different parent, before using the same parent if the limit is exceeded.
           
-          :lexicase-youth-bias false
+          :age-mediated-parent-selection false
           ;; If truthy, should be a vector of [pmin pmax]. In this case, then with probability
-          ;; pmin, lexicase selection will consider only individuals with the minimum age in
+          ;; pmin, parent selection will consider only individuals with the minimum age in
           ;; the population; with probability pmax, all individuals will be considered; with
-          ;; probability (- 1.0 pmin pmax) an age cutoff will be selected uniformly from 
+          ;; probability (- 1.0 pmin pmax) an age cutoff will be chosen uniformly from 
           ;; those present in the population, and only individuals with the cutoff age or 
           ;; lower will be considered.
-          ;; 
-          ;; NOTE: This doesn't really have anything to do with the lexicase selection algorithm
-          ;; per se, but is called "lexiase-youth-bias" because it is currently implemented only
-          ;; for lexicase selection.
-          ;;
-          ;; NOTE: Not compatible with trivial geography.
           ;;
           ;; NOTE: It doesn't make any sense to use this unless you have multiple ages in the
-          ;; population, as you migh have, for example, from using the genesis operator.
+          ;; population, as you migh have, for example, from using the genesis operator or
+          ;; autoconstruction.
+          
+          :age-combining-function :average
+          ;; For genetic operators that involve multiple parents, the function used to combine
+          ;; the incremented ages of the parents to produce the age of the child.
+          
+          :random-screen false
+          ;; If truthy, should be a map with values for :criterion, :probability and possibly
+          ;; :reversible. In this case, then with probability :probability, each parent 
+          ;; selection event will consider only individuals with :grain-size equal to or less
+          ;; than a :grain-size chosen randomly from those present in the population. The
+          ;; :criterion (see genetic-operators.clj for options) determines how :grain-size is
+          ;; computed for an individual when it is created. If :reversible is truthy, then the
+          ;; screen will be applied in reverse with probability 1/2, causing parent selection
+          ;; to consider only individuals with :grain-size equal to or GREATER than the
+          ;; chosen :grain-size.
 
           ;;----------------------------------------
           ;; Arguments related to the Push interpreter
@@ -405,7 +411,7 @@
           ;; When true, will exit the run when there is an individual with a zero-error vector
 
           ;;----------------------------------------
-          ;; Arguments related to printing JSON, EDN, or CSV logs
+          ;; Arguments related to printing JSON, EDN, CSV, and remote recording
           ;;----------------------------------------
 
           :print-csv-logs false
@@ -444,6 +450,14 @@
 
           :json-log-program-strings false
           ;; If true, JSON logs will include program strings for each individual.
+
+          :record-host nil
+          ;; Should be in the format "<hostname>:<port>"
+          ;; If set, will send logs of each run to a server running on this
+          ;; host
+          :label nil
+          ;; If set, will send this in the configuration of the run, to the
+          ;; external record
           )))
 
 (defn load-push-argmap
@@ -570,7 +584,4 @@
   ([argmap]
    (load-push-argmap argmap)
    (reset-globals)))
-
-
-
 
