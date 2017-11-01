@@ -16,23 +16,22 @@
     (* n (factorial (- n 1)))))
 
 (def argmap
-  {:error-function (fn [program]
+  {:error-function (fn [individual]
                      (let [behavior (atom '())
                            errors (doall
                                     (for [input (range 1 11)]
-                                      (let [state (run-push program
+                                      (let [state (run-push (:program individual)
                                                             (push-item input :input
                                                                        (push-item input :integer
                                                                                   (make-push-state))))
                                             top-int (top-item :integer state)]
-                                        (when @global-print-behavioral-diversity
-                                          (swap! behavior conj top-int))
+                                        (swap! behavior conj top-int)
                                         (if (number? top-int)
                                           (abs (- top-int (factorial input)))
                                           1000000000))))] ;; big penalty, since errors can be big
-                       (when @global-print-behavioral-diversity
-                         (swap! population-behaviors conj @behavior))
-                       errors))
+                       (assoc individual
+                              :errors errors
+                              :behaviors @behavior)))
    :atom-generators '(0
                        1
                        in1
@@ -72,7 +71,7 @@
                        )
    :population-size 1000
    :max-generations 500
-   :max-points 1000
+   :max-points 2000
    :max-genome-size-in-initial-program 100
    :evalpush-limit 1000
    :genetic-operator-probabilities {[:alternation :uniform-mutation] 0.5

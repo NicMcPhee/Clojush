@@ -63,23 +63,25 @@
 (def bits->int (memoize bits->int-unmemoized))
   
 (def argmap
-  {:error-function (fn [program]
+  {:error-function (fn [individual]
                      (let [total-num-bits (+ number-of-address-bits number-of-data-bits)]
-                       (doall
-                         (for [i (range (expt 2 total-num-bits))]
-                           (let [bits (int->bits i total-num-bits)
-                                 address-bits (vec (take number-of-address-bits bits))
-                                 data-bits (vec (drop number-of-address-bits bits))
-                                 state (run-push program 
-                                                 (push-item address-bits :auxiliary 
-                                                            (push-item data-bits :auxiliary 
-                                                                       (make-push-state))))
-                                 top-bool (top-item :boolean state)]
-                             (if (= top-bool :no-stack-item)
-                               1000000
-                               (if (= top-bool (nth data-bits (bits->int address-bits)))
-                                 0
-                                 1)))))))
+                       (assoc individual
+                              :errors
+                              (doall
+                               (for [i (range (expt 2 total-num-bits))]
+                                 (let [bits (int->bits i total-num-bits)
+                                       address-bits (vec (take number-of-address-bits bits))
+                                       data-bits (vec (drop number-of-address-bits bits))
+                                       state (run-push (:program individual)
+                                                       (push-item address-bits :auxiliary 
+                                                                  (push-item data-bits :auxiliary 
+                                                                             (make-push-state))))
+                                       top-bool (top-item :boolean state)]
+                                   (if (= top-bool :no-stack-item)
+                                     1000000
+                                     (if (= top-bool (nth data-bits (bits->int address-bits)))
+                                       0
+                                       1))))))))
    :atom-generators (concat
                       [(fn [] (lrand-int (+ number-of-address-bits number-of-data-bits)))]
                       '(a d exec_if boolean_and boolean_or boolean_not
@@ -87,7 +89,7 @@
                           ;integer_add integer_sub integer_mult integer_div integer_mod
                           ;integer_dup integer_swap integer_pop integer_rot
                           ))
-   :max-points 400
+   :max-points 800
    :max-genome-size-in-initial-program 200
    :genetic-operator-probabilities {:uniform-close-mutation 0.1
                                     :alternation 0.45

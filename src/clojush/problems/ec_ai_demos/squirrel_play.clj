@@ -31,11 +31,21 @@
    [59, false]
    [59, true]
    [60, false]
-   [59, true]
+   [60, true]
+   [61, true]
+   [61, false]
+   [89, false]
+   [89, true]
    [91, false]
    [91, true]
+   [99, false]
+   [99, true]
    [101, true]
-   [101, false]])
+   [101, false]
+   [105, true]
+   [105, false]
+   [200, true]
+   [200, false]])
 
 (defn expected-output
   [inputs]
@@ -61,8 +71,8 @@
   [program inputs]
   (let [start-state (make-start-state inputs)
         end-state (run-push program start-state)
-        top-int (top-item :boolean end-state)]
-    top-int))
+        result (top-item :boolean end-state)]
+    result))
 
 (defn all-errors
   [program]
@@ -75,12 +85,20 @@
           1)))))
 
 (def atom-generators
-  (concat (registered-for-stacks [:integer :boolean :exec])
-          (list (fn [] (lrand-int 100))
-                60 90 100
-                'in1 'in2)))
+  (concat
+    ; Include all the instructions that act on integers and booleans
+    ; Could have :exec here, but I just am limiting things to exec-if
+    (registered-for-stacks [:integer :boolean])
+    (list 'exec_if)
+    ; A bunch of random numbers in case that's useful.
+    ; (list (fn [] (lrand-int 100)))
+    ; The three numeric constants that are specified in the problem statement
+    (list 60 90 100)
+    ; The two inputs
+    (list 'in1 'in2)))
 
 (def argmap
   {:error-function all-errors
    :atom-generators atom-generators
+   :population-size 500
    })

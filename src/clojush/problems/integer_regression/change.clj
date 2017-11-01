@@ -56,27 +56,29 @@
   "Returns the error function for the change problem. Takes as input number
    of test cases to use."
   [number-test-cases]
-  (fn [program]
-    (doall
-      (for [[input output] (change-test-cases number-test-cases)]
-        (let [final-state (run-push program
-                                    (push-item input
-                                               :input
-                                               (push-item input
-                                                          :integer
-                                                          (make-push-state))))
-              result-output (top-item :integer final-state)]
-          ; The error is the integer difference between the desired output
-          ; and the result output.
-          (if (number? result-output)
-            (abs (- result-output output))
-            1000))))))
+  (fn [individual]
+    (assoc individual
+           :errors
+           (doall
+            (for [[input output] (change-test-cases number-test-cases)]
+              (let [final-state (run-push (:program individual)
+                                          (push-item input
+                                                     :input
+                                                     (push-item input
+                                                                :integer
+                                                                (make-push-state))))
+                    result-output (top-item :integer final-state)]
+                                        ; The error is the integer difference between the desired output
+                                        ; and the result output.
+                (if (number? result-output)
+                  (abs (- result-output output))
+                  1000)))))))
 
 ; Define the argmap
 (def argmap
   {:error-function (change-error-function 150)
    :atom-generators change-atom-generators
-   :max-points 1000
+   :max-points 2000
    :max-genome-size-in-initial-program 500
    :evalpush-limit 800
    :population-size 2000

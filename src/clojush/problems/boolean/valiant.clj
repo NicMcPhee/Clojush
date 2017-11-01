@@ -45,16 +45,19 @@
 
 (defn rp [prog state] (run-push prog state true))
 
-(defn valiant-fitness [program]
-  (doall (for [c (range numcases)]
-           (let [[inputs answer] (nth cases c)
-                 output (->> (make-push-state)
-                             (push-item inputs :auxiliary)
-                             (run-push program)
-                             ;(rp program)
-                             (top-item :boolean))]
-             ;(println "output" output "answer" answer)
-             (if (= output answer) 0 1)))))
+(defn valiant-fitness
+  [individual]
+  (assoc individual
+         :errors
+         (doall (for [c (range numcases)]
+                  (let [[inputs answer] (nth cases c)
+                        output (->> (make-push-state)
+                                    (push-item inputs :auxiliary)
+                                    (run-push (:program individual))
+                                        ;(rp (:program individual))
+                                    (top-item :boolean))]
+                                        ;(println "output" output "answer" answer)
+                    (if (= output answer) 0 1))))))
 
 ;input-indices
 
@@ -97,7 +100,7 @@
 ;                                   (repeat 25 
 ;                                           '(boolean_and boolean_or boolean_not exec_if))))
 ;   :use-lexicase-selection true
-;   :max-points 20000
+;   :max-points 40000
 ;   :max-genome-size-in-initial-program 10
 ;   :population-size 100
 ;   :evalpush-limit 10000
@@ -121,7 +124,7 @@
                             (apply concat 
                                    (repeat 25 
                                            '(boolean_and boolean_or boolean_not exec_if))))
-   :max-points 2000
+   :max-points 4000
    :max-genome-size-in-initial-program 100
    :population-size 100
    :evalpush-limit 2000

@@ -18,15 +18,15 @@
 (defn majority-fitness
   "Returns a fitness function for the lid problem for specified
 depth and number of nodes."
-  [program]
-  (let [f (frequencies (filter number? (flatten program)))
+  [individual]
+  (let [f (frequencies (filter number? (flatten (:program individual))))
         dfs (map #(if (or (and (contains? f %)
 			       (not (contains? f (- %))))
 			  (and (contains? f %)
 			       (contains? f (- %))
 			       (>= (- (f %) (f (- %))) 0)))
                     0 1) (range 1 (inc @global-problem-size)))]
-    dfs))
+    (assoc individual :errors dfs)))
 
 (defn make-majority-instructions
   "Make the majority instructions for a given problem size."
@@ -42,7 +42,7 @@ depth and number of nodes."
     (reset! global-problem-size size)
     (println "problem-size =" size)
     (def argmap
-      {:max-points (* 10 2 size)
+      {:max-points (* 10 4 size)
        :max-genome-size-in-initial-program (* 10 size)
        :error-function majority-fitness
        :atom-generators atom-generators

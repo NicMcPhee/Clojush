@@ -68,20 +68,23 @@
                                  (make-push-state)))))
 
 (def argmap
-  {:error-function (fn [program]
-                     (doall
-                       (for [[input output] @rule30-data-this-generation]
-                         (if (= (rule30-program-output program input)
-                                output)
-                           0
-                           1))))
+  {:error-function (fn [individual]
+                     (assoc individual
+                            :errors
+                            (doall
+                             (for [[input output] @rule30-data-this-generation]
+                               (if (= (rule30-program-output (:program individual)
+                                                             input)
+                                      output)
+                                 0
+                                 1)))))
    :atom-generators (concat (list (fn [] (- (lrand-int 5) 2))
                                   ;(tag-instruction-erc [:exec :integer :boolean] 1000)
                                   ;(tagged-instruction-erc 1000)
                                   'in1)
                             (registered-for-stacks [:integer :boolean :exec]))
    
-   :max-points 512
+   :max-points 1024
    :max-genome-size-in-initial-program 128
    :evalpush-limit 2048
    :genetic-operator-probabilities {:alternation 0.2
@@ -115,9 +118,3 @@
                    output)
               0
               1))))
-
-
-
-
-
-

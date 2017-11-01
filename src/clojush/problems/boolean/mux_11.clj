@@ -57,29 +57,31 @@
 (define-registered d7 (with-meta (d 7) {:stack-types [:boolean]}))
 
 (def argmap
-  {:error-function (fn [program]
-                     (doall
-                       (for [i (range 2048)]
-                         (let [bits (int->bits i 11)
-                               address-bits (vec (take 3 bits))
-                               data-bits (vec (drop 3 bits))
-                               state (run-push program 
-                                               (push-item address-bits :auxiliary 
-                                                          (push-item data-bits :auxiliary 
-                                                                     (make-push-state))))
-                               top-bool (top-item :boolean state)]
-                           (if (= top-bool :no-stack-item)
-                             1000000
-                             (if (= top-bool (nth data-bits (bits->int address-bits)))
-                               0
-                               1))))))
+  {:error-function (fn [individual]
+                     (assoc individual
+                            :errors
+                            (doall
+                             (for [i (range 2048)]
+                               (let [bits (int->bits i 11)
+                                     address-bits (vec (take 3 bits))
+                                     data-bits (vec (drop 3 bits))
+                                     state (run-push (:program individual) 
+                                                     (push-item address-bits :auxiliary 
+                                                                (push-item data-bits :auxiliary 
+                                                                           (make-push-state))))
+                                     top-bool (top-item :boolean state)]
+                                 (if (= top-bool :no-stack-item)
+                                   1000000
+                                   (if (= top-bool (nth data-bits (bits->int address-bits)))
+                                     0
+                                     1)))))))
    :atom-generators '(exec_if boolean_and boolean_or boolean_not
                               a0 a1 a2
                               d0 d1 d2 d3 d4 d5 d6 d7
                               ;boolean_dup boolean_swap boolean_pop boolean_rot
                               )
    :population-size 100
-   :max-points 200
+   :max-points 400
    :max-genome-size-in-initial-program 100
    :genetic-operator-probabilities {:uniform-close-mutation 0.1
                                     :alternation 0.45
