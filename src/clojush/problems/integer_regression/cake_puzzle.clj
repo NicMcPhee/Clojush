@@ -15,23 +15,25 @@
   [num-points]
   (+ 1 (choose num-points 2) (choose num-points 4)))
 
+(defn run-prog
+  [program input]
+  (let [state (run-push program
+                        (push-item input :input
+                                   (make-push-state)))
+        top-int (top-item :integer state)]
+    (if (number? top-int)
+      (abs (- top-int (cake-pieces input)))
+      1000000000))) ;; big penalty, since errors can be big
+
 (def argmap
   {:error-function (fn [program]
                      (let [behavior (atom '())
                            errors (doall
-                                    (for [input (range 16)]
-                                      (let [state (run-push program
-                                                            (push-item input :input
-                                                                       (push-item input :integer
-                                                                                  (make-push-state))))
-                                            top-int (top-item :integer state)]
-                                        (when @global-print-behavioral-diversity
-                                          (swap! behavior conj top-int))
-                                        (if (number? top-int)
-                                          (abs (- top-int (cake-pieces input)))
-                                          1000000000))))] ;; big penalty, since errors can be big
-                       (when @global-print-behavioral-diversity
-                         (swap! population-behaviors conj @behavior))
+                                    (for [a (range 16)
+                                          :let [b (inc a)
+                                                a-result (run-prog program a)
+                                                b-result (run-prog program b)]]
+                                      (max a-result b-result)))]
                        errors))
    :atom-generators '(0
                        1
@@ -48,14 +50,17 @@
                        exec_dup
                        exec_eq
                        exec_if
-                       exec_k
+                       ;exec_k
                        exec_noop
                        exec_pop
                        exec_rot
-                       exec_s
+                       ;exec_s
                        exec_swap
                        exec_when
-                       exec_y
+                       exec_do*times
+                       exec_do*range
+                       exec_do*while
+                       ;exec_y
                        integer_add
                        integer_div
                        integer_dup
