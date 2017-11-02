@@ -1,4 +1,4 @@
-(defproject clojush "3.0.0-1-SNAPSHOT" 
+(defproject clojush "3.0.0-1-SNAPSHOT"
   :description "The Push programming language and the PushGP genetic programming
                 system implemented in Clojure. See http://pushlanguage.com"
   :license {:name "Eclipse Public License"
@@ -6,7 +6,7 @@
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojars.etosch/cosmos "1.0.0"]
                  [org.clojure/math.numeric-tower "0.0.4"]
-                 [org.clojure/math.combinatorics "0.1.1"]
+                 [org.clojure/math.combinatorics "0.1.4"]
                  [org.clojure/data.csv "0.1.3"]
                  [local-file "0.1.0"]
                  [clojure-csv "2.0.1"]
