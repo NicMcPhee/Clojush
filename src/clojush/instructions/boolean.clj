@@ -30,7 +30,7 @@
 (define-registered
   boolean_not
   ^{:stack-types [:boolean]}
-  (fn 
+  (fn
     [state]
     (if (not (empty? (:boolean state)))
       (push-item (not (stack-ref :boolean 0 state))
@@ -45,6 +45,28 @@
     (if (not (empty? (rest (:boolean state))))
       (push-item (not= (stack-ref :boolean 0 state)
                        (stack-ref :boolean 1 state))
+                 :boolean
+                 (pop-item :boolean (pop-item :boolean state)))
+      state)))
+
+(define-registered
+  boolean_nand
+  ^{:stack-types [:boolean]}
+  (fn [state]
+    (if (not (empty? (rest (:boolean state))))
+      (push-item (not (and (stack-ref :boolean 0 state)
+                           (stack-ref :boolean 1 state)))
+                 :boolean
+                 (pop-item :boolean (pop-item :boolean state)))
+      state)))
+
+(define-registered
+  boolean_nor
+  ^{:stack-types [:boolean]}
+  (fn [state]
+    (if (not (empty? (rest (:boolean state))))
+      (push-item (not (or (stack-ref :boolean 0 state)
+                          (stack-ref :boolean 1 state)))
                  :boolean
                  (pop-item :boolean (pop-item :boolean state)))
       state)))
