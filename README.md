@@ -1,7 +1,4 @@
 Clojush [![Travis branch](https://img.shields.io/travis/lspector/Clojush/master.svg?style=flat-square)](https://travis-ci.org/lspector/Clojush) [![Coveralls branch](https://img.shields.io/coveralls/lspector/Clojush/master.svg?style=flat-square)](https://coveralls.io/github/lspector/Clojush) [![API Docs](https://img.shields.io/badge/api%20docs-master-blue.svg?style=flat-square)](http://lspector.github.io/Clojush/) [![Clojars Project](https://img.shields.io/clojars/v/clojush.svg?style=flat-square)](http://clojars.org/clojush)
-=======
-
-[![](https://codescene.io/projects/1994/status.svg) Get more details at **codescene.io**.](https://codescene.io/projects/1994/jobs/latest-successful/results)
 
 =======
 
@@ -342,3 +339,7 @@ This material is based upon work supported by the National Science Foundation
 under Grant No. 1017817. Any opinions, findings, and conclusions or
 recommendations expressed in this publication are those of the authors and
 do not necessarily reflect the views of the National Science Foundation.
+
+=======
+
+[![](https://codescene.io/projects/1994/status.svg) Get more details at **codescene.io**.](https://codescene.io/projects/1994/jobs/latest-successful/results)
