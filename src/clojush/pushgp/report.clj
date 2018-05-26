@@ -76,11 +76,12 @@
    If log-fitnesses-for-all-cases is true, it also prints the value
    of each fitness case."
   [population generation {:keys [csv-log-filename csv-columns]}]
-  (let [columns (concat [:uuid]
-                        (filter #(some #{%} csv-columns)
-                                [:generation :location :parent-uuids :genetic-operators 
-                                 :push-program-size :plush-genome-size :push-program 
-                                 :plush-genome :total-error :is-random-replacement]))]
+  (let [columns (vec
+                  (concat [:uuid]
+                          (filter #(some #{%} csv-columns)
+                                  [:generation :location :parent-uuids :genetic-operators 
+                                   :push-program-size :plush-genome-size :push-program 
+                                   :plush-genome :total-error :is-random-replacement])))]
     (when (zero? generation)
       (with-open [csv-file (io/writer csv-log-filename :append false)]
         (csv/write-csv csv-file
@@ -350,7 +351,8 @@
                (doall (map frequencies (apply map vector (map :errors population))))))
     (when (some #{parent-selection} 
                 #{:lexicase :elitegroup-lexicase :leaky-lexicase :epsilon-lexicase 
-                  :random-threshold-lexicase}) 
+                  :random-threshold-lexicase :random-toggle-lexicase 
+                  :randomly-truncated-lexicase}) 
           (lexicase-report population argmap))
     (when (= total-error-method :ifs) (implicit-fitness-sharing-report population argmap))
     (println (format "--- Best Program (%s) Statistics ---" (str "based on " (name err-fn))))

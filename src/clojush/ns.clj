@@ -10,9 +10,10 @@
              args evaluate globals individual interpreter pushstate random 
              simplification translate util))
      (use '(clojush.instructions 
-             boolean code common numbers random-instructions return string tag zip))
+             boolean code common numbers random-instructions environment string tag zip))
      (use '(clojush.pushgp breed genetic-operators pushgp report))
      (use '(clojush.pushgp.selection 
              selection preselection tournament lexicase epsilon-lexicase 
-             elitegroup-lexicase random-threshold-lexicase implicit-fitness-sharing))))
+             elitegroup-lexicase random-threshold-lexicase random-toggle-lexicase 
+             randomly-truncated-lexicase implicit-fitness-sharing))))
 
