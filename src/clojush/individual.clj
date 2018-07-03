@@ -50,3 +50,8 @@
                           :is-random-replacement)]
           (interleave k  (map #(printable (get i %)) k)))))
 
+;; Used to keep track of when we first see an error vector
+;; This maps error vectors to the first generation
+;; where they were discovered.
+(def first-gen-for-errors (atom {}))
+

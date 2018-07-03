@@ -83,9 +83,6 @@
 (def max-age (atom 0))
 ;; Used for age-mediated-parent-selection
 
-(def first-gen-for-errors (atom {}))
-;; Used to keep track of when we first see an error vector
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The globals below may be reset by arguments to pushgp
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
