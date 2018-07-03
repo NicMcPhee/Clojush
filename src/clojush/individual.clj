@@ -44,9 +44,9 @@
 
 (defn individual-string [i]
   (cons 'individual.
-        (let [k '(:genome :program :errors :behaviors :total-error :normalized-error 
-                          :weighted-error :novelty :meta-errors :history :ancestors :uuid 
-                          :parent-uuids :genetic-operators :age :grain-size 
+        (let [k '(:genome :program :errors :behaviors :total-error :normalized-error
+                          :weighted-error :novelty :meta-errors :history :ancestors :uuid
+                          :parent-uuids :genetic-operators :age :grain-size
                           :is-random-replacement)]
           (interleave k  (map #(printable (get i %)) k)))))
 
@@ -55,3 +55,19 @@
 ;; where they were discovered.
 (def first-gen-for-errors (atom {}))
 
+(defn get-first-gen-for-errors
+  [errors current-generation]
+  (if-let [first-gen (get @first-gen-for-errors errors)]
+    first-gen
+    (do
+      (println (str
+        "First time seeing " errors " in generation " current-generation))
+      (swap! first-gen-for-errors assoc errors current-generation)
+      current-generation)))
+
+(defn age-of-error-vector
+  [ind current-generation]
+  (let [errors (:errors ind)
+        first-gen (get-first-gen-for-errors errors current-generation)
+        age (- current-generation first-gen)]
+    age))

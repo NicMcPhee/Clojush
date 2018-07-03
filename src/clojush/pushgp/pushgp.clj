@@ -155,7 +155,12 @@
   (population-translate-plush-to-push pop-agents @push-argmap)
   (timer @push-argmap :reproduction)
   (print "Computing errors... ") (flush)
-  (compute-errors pop-agents rand-gens @push-argmap)
+  ; This adds the current generation to the argmap since it's needed for at
+  ; least one meta-error calculation. It might make sense to including it
+  ; in the version of @push-argmap passed to other calls as well, in which
+  ; case it should probably be added once up at the top instead of lots of
+  ; separate times.
+  (compute-errors pop-agents rand-gens (assoc @push-argmap :generation generation))
   (println "Done computing errors.") (flush)
   (timer @push-argmap :fitness)
   ;; calculate solution rates if necessary for historically-assessed hardness
@@ -237,4 +242,3 @@
            (if (nil? next-novelty-archive)
              return-val
              (recur (inc generation) next-novelty-archive))))))))
-

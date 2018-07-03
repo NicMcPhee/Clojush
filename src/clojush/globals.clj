@@ -140,7 +140,7 @@
 ;; The type of parent selection used
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; This atom is used to convey information to clojush.pushgp.visualize, but it cannot be 
+;; This atom is used to convey information to clojush.pushgp.visualize, but it cannot be
 ;; defined there because it must always be available to clojush.pushgp.report, and we don't
 ;; want to :require clojush.pushgp.visualize there unless :visualize is true, since doing so
 ;; will require quil.core, which will launch the quil sketch.
